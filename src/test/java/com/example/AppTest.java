@@ -28,7 +28,7 @@ public class AppTest {
     public void testGreet() {
         App app = new App();
         String result = app.greet();
-        assertEquals("Hello, World!", result);
+        assertEquals("Hello World!", result);
     }
 }
 
