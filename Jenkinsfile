@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     def javaHome = tool name: 'JDK 21', type: 'jdk'
-                    def mavenHome = tool name: 'Maven 3.8.4', type: 'maven'
+                    def mavenHome = tool name: 'my_maven', type: 'maven'
 
                     withEnv([
                         "JAVA_HOME=${javaHome}",
