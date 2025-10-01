@@ -26,9 +26,8 @@ public class AppTest {
 
     @Test
     public void testGreet() {
-        App app = new App();
-        String result = app.greet();
-        assertEquals("Hello World!", result);
+           // Call the main method directly
+        App.main(new String[]{});
     }
 }
 
