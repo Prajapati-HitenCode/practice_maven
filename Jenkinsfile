@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/example/my-java-app.git'
+                git branch: 'main', url: 'https://github.com/Prajapati-HitenCode/practice_maven.git'
             }
         }
         stage('Build') {
