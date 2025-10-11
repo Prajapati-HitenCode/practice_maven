@@ -13,8 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Prajapati-HitenCode/practice_maven.git',
-                    // credentialsId: 'github-credentials' // Make sure to create this in Jenkins
+                    url: 'https://github.com/Prajapati-HitenCode/practice_maven.git'
             }
         }
 
