@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Prajapati-HitenCode/practice_maven.git'
+                git branch: 'main', url: 'https://github.com/example/my-java-app.git'
             }
         }
         stage('Build') {
@@ -25,19 +25,14 @@ pipeline {
                 bat 'mvn test'
             }
         }
-        stage('Package') {
-            steps {
-                bat 'mvn package'
-            }
-        }
     }
 
     post {
         success {
-            echo 'Build and Tests SUCCESSFUL ✅'
+            echo '✅ CI Passed: Build and Tests Successful'
         }
         failure {
-            echo 'Build FAILED ❌'
+            echo '❌ CI Failed: Check Build Logs'
         }
     }
-}
+}  
