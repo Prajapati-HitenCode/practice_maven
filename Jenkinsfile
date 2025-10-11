@@ -1,41 +1,43 @@
 pipeline {
     agent any
+
     tools {
-        jdk 'jdk21'           // The exact name of your JDK tool configured in Jenkins Global Tools
-        maven 'my_maven'    // Your Maven tool name
+        maven 'Maven3'
     }
+
+    triggers {
+        githubPush()
+    }
+
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Prajapati-HitenCode/practice_maven.git'
+            }
+        }
         stage('Build') {
             steps {
-                script {
-                    // Get the path of the installed JDK tool
-                    def javaHome = tool name: 'jdk21', type: 'jdk'
-                    def mavenHome = tool name: 'my_maven', type: 'maven'
-
-                    // Set JAVA_HOME and update PATH for the build step
-                    withEnv([
-                        "JAVA_HOME=${javaHome}",
-                        "PATH=${javaHome}\\bin;${mavenHome}\\bin;${env.PATH}"
-                    ]) {
-                        bat 'mvn clean install'
-                    }
-                }
+                sh 'mvn clean compile'
             }
         }
         stage('Test') {
             steps {
-                script {
-                    def javaHome = tool name: 'jdk21', type: 'jdk'
-                    def mavenHome = tool name: 'my_maven', type: 'maven'
-
-                    withEnv([
-                        "JAVA_HOME=${javaHome}",
-                        "PATH=${javaHome}\\bin;${mavenHome}\\bin;${env.PATH}"
-                    ]) {
-                        bat 'mvn test'
-                    }
-                }
+                sh 'mvn test'
             }
+        }
+        stage('Package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and Tests SUCCESSFUL ✅'
+        }
+        failure {
+            echo 'Build FAILED ❌'
         }
     }
 }
