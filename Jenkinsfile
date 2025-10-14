@@ -1,47 +1,58 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven3'
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-cred')
     }
 
-    triggers {
-        githubPush()
+    tools {
+        maven 'Maven3'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/Prajapati-HitenCode/practice_maven.git'
+                git branch: 'main', url: 'https://github.com/example/my-java-app.git'
             }
         }
 
-        stage('Build') {
+        stage('Build & Test') {
             steps {
                 bat 'mvn clean package'
             }
         }
 
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
-                bat 'mvn test'
+                bat 'docker build -t myapp:latest .'
             }
         }
 
-        stage('Archive Artifact') {
+        stage('Push to DockerHub') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    bat 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
+                    bat 'docker tag hitenprajapati1774/my_jenkins_repo:latest'
+                    bat 'docker push hitenprajapati1774/my_jenkins_repo:latest'
+                }
+            }
+        }
+
+        stage('Deploy to Server') {
+            steps {
+                sshagent(credentials: ['ssh-server-cred']) {
+                    bat 'ssh -o StrictHostKeyChecking=no user@server "docker pullhitenprajapati1774/my_jenkins_repo:latest && docker stop my_jenkins_repo || true && docker rm my_jenkins_repo || true && docker run -d --name my_jenkins_repo -p 8080:8080 hitenprajapati1774/my_jenkins_repo:latest"'
+                }
             }
         }
     }
 
     post {
         success {
-            echo '✅ CI Passed: Build and Tests Successful'
+            echo '🚀 CD Done: App deployed to server!'
         }
         failure {
-            echo '❌ CI Failed: Check Build Logs'
+            echo '❌ Deployment failed. Check the logs.'
         }
     }
 }
