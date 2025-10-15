@@ -31,7 +31,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    bat 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
+                    // bat 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
                     bat 'docker tag hitenprajapati1774/my_jenkins_repo:latest'
                     bat 'docker push hitenprajapati1774/my_jenkins_repo:latest'
                 }
@@ -46,7 +46,7 @@ pipeline {
             }
         }
     }
-    
+
     post {
         success {
             echo '🚀 CD Done: App deployed to server!'
