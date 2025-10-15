@@ -31,9 +31,9 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    // bat 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
-                    bat 'docker tag hitenprajapati1774/my_jenkins_repo:latest'
-                    bat 'docker push hitenprajapati1774/my_jenkins_repo:latest'
+                    bat 'docker tag myapp:latest %USERNAME%/my_jenkins_repo:latest'
+                    bat 'echo %PASSWORD% | docker login -u %USERNAME% --password-stdin'
+                    bat 'docker push %USERNAME%/my_jenkins_repo:latest'
                 }
             }
         }
@@ -41,7 +41,13 @@ pipeline {
         stage('Deploy to Server') {
             steps {
                 sshagent(credentials: ['ssh-server-cred']) {
-                    bat 'ssh -o StrictHostKeyChecking=no user@server "docker pullhitenprajapati1774/my_jenkins_repo:latest && docker stop my_jenkins_repo || true && docker rm my_jenkins_repo || true && docker run -d --name my_jenkins_repo -p 8080:8080 hitenprajapati1774/my_jenkins_repo:latest"'
+                    bat '''
+                        ssh -o StrictHostKeyChecking=no user@server ^
+                        "docker pull hitenprajapati1774/my_jenkins_repo:latest && ^
+                        docker stop my_jenkins_repo || true && ^
+                        docker rm my_jenkins_repo || true && ^
+                        docker run -d --name my_jenkins_repo -p 8080:8080 hitenprajapati1774/my_jenkins_repo:latest"
+                    '''
                 }
             }
         }
