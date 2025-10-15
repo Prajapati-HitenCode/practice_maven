@@ -52,7 +52,7 @@ pipeline {
             echo '🚀 CD Done: App deployed to server!'
         }
         failure {
-            echo '❌ Deployment failed. Check the logs.'
+            echo '❌ Deployment failed. Check the logs!!'
         }
     }
 }
