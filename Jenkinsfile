@@ -46,7 +46,7 @@ pipeline {
             }
         }
     }
-    echo "your-access-token" | docker login -u your-username --password-stdin
+    
     post {
         success {
             echo '🚀 CD Done: App deployed to server!'
